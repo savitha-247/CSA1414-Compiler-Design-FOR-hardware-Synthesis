@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>   // for exit()
+
+char input[100];
+int i = 0;
+
+void S();
+
+void error() {
+    printf("Error in parsing!\n");
+    exit(0);
+}
+
+void match(char c) {
+    if (input[i] == c)
+        i++;
+    else
+        error();
+}
+
+// Grammar: S → aSb | ε
+void S() {
+    if (input[i] == 'a') {
+        match('a');
+        S();
+        match('b');
+    }
+    // else ε → do nothing
+}
+
+int main() {
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    S();
+
+    if (input[i] == '\0')
+        printf("Parsing successful! String accepted.\n");
+    else
+        printf("Parsing failed! Extra symbols found.\n");
+
+    return 0;
+}
