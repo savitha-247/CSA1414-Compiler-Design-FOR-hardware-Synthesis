@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 10
+
+int main() {
+    int i, j, n;
+    char non_terminal;
+    char beta[MAX][MAX], alpha[MAX][MAX];
+    int nb = 0, na = 0;
+
+    printf("Enter the number of productions: ");
+    scanf("%d", &n);
+
+    for (int k = 0; k < n; k++) {
+        printf("\nEnter production (format: A->string): ");
+        char prod[20];
+        scanf("%s", prod);
+
+        non_terminal = prod[0];
+
+        char *rhs = strchr(prod, '>') + 1;
+
+        if (rhs[0] == non_terminal) { // Left recursion
+            strcpy(alpha[na++], rhs + 1);
+        } else { // Non-left-recursive
+            strcpy(beta[nb++], rhs);
+        }
+    }
+
+    // Printing result
+    printf("\nAfter eliminating left recursion:\n");
+    if (na == 0) {
+        // No left recursion
+        for (i = 0; i < nb; i++) {
+            printf("%c -> %s\n", non_terminal, beta[i]);
+        }
+    } else {
+        // Print A -> βA'
+        for (i = 0; i < nb; i++) {
+            printf("%c -> %s%c'\n", non_terminal, beta[i], non_terminal);
+        }
+        // Print A' -> αA' | ε
+        printf("%c' -> ", non_terminal);
+        for (i = 0; i < na; i++) {
+            printf("%s%c'", alpha[i], non_terminal);
+            if (i != na - 1) printf(" | ");
+        }
+        printf(" | ε\n");
+    }
+
+    return 0;
+}
