@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char expr[50];
+    printf("Enter an expression (example: a=b+c*d): ");
+    scanf("%s", expr);
+
+    // Simple backend code generation (3-address code)
+    printf("\nGenerated 3-Address Code:\n");
+
+    int i = 0, t = 1;
+    while (expr[i] != '\0') {
+        if (expr[i] == '+' || expr[i] == '-' || expr[i] == '*' || expr[i] == '/') {
+            printf("t%d = %c %c %c\n", t, expr[i - 1], expr[i], expr[i + 1]);
+            expr[i + 1] = 't'; // replace result with temporary variable
+            expr[i + 2] = t + '0';
+            t++;
+        }
+        i++;
+    }
+    printf("%c = %c\n", expr[0], expr[i - 1]);
+
+    return 0;
+}
