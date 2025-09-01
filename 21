@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 20
+
+// Function to find the longest common prefix between two strings
+int longestPrefix(char *s1, char *s2) {
+    int i = 0;
+    while (s1[i] && s2[i] && s1[i] == s2[i]) i++;
+    return i;
+}
+
+int main() {
+    int n, i, j;
+    char non_terminal;
+    char prods[MAX][MAX];
+
+    printf("Enter the number of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions (Format: A->string):\n");
+    for (i = 0; i < n; i++) {
+        scanf("%s", prods[i]);
+    }
+
+    // Assume all productions are for the same non-terminal (like A->...)
+    non_terminal = prods[0][0];
+
+    // Extract RHS parts
+    char rhs[MAX][MAX];
+    for (i = 0; i < n; i++) {
+        strcpy(rhs[i], strchr(prods[i], '>') + 1);
+    }
+
+    // Find longest common prefix among all
+    int prefixLen = strlen(rhs[0]);
+    for (i = 1; i < n; i++) {
+        int len = longestPrefix(rhs[0], rhs[i]);
+        if (len < prefixLen) prefixLen = len;
+    }
+
+    printf("\nAfter eliminating left factoring:\n");
+
+    if (prefixLen == 0) {
+        // No common prefix
+        for (i = 0; i < n; i++) {
+            printf("%c -> %s\n", non_terminal, rhs[i]);
+        }
+    } else {
+        // Print factored rule
+        printf("%c -> ", non_terminal);
+        for (i = 0; i < prefixLen; i++) {
+            printf("%c", rhs[0][i]);
+        }
+        printf("%c'\n", non_terminal);
+
+        // Print new productions for A'
+        printf("%c' -> ", non_terminal);
+        for (i = 0; i < n; i++) {
+            if (strlen(rhs[i]) == prefixLen) {
+                printf("ε");
+            } else {
+                printf("%s", rhs[i] + prefixLen);
+            }
+            if (i != n - 1) printf(" | ");
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
